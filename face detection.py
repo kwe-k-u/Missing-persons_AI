@@ -70,3 +70,25 @@ components the program  will need:
     - hardware to hold the computational power
 
 """
+
+
+
+
+
+
+
+
+
+
+"""
+    rather than taking one picture and then searching the entirity of social media
+    for a match and then moving on to the next picture, put a collection of pictures
+    in a list and check for matches for each of them.
+    This will save bandwidth and processing time
+
+
+    drawbacks:
+        will take longer to find matches for all the pictures depending on the
+        number of images to be searched
+"""
+
