@@ -69,6 +69,9 @@ components the program  will need:
     them among others
     - hardware to hold the computational power
 
+features:
+    - search for tweets in vicitiny
+
 """
 
 
