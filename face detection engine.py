@@ -1,11 +1,16 @@
 #imports
 import face_recognition as face_rec
+import face_recognition
 import os
-
+count = 0
+errors = 0
 #this function converts images to facial encodings for comparison
 def encode_face(image):
-    image = image.face_encodings(image)[0]
-
+    print(image)
+    try:
+        image = face_rec.face_encodings(image)
+    except:
+        print("Error")
     return image
 
 
@@ -27,11 +32,14 @@ def compare(untethered, tethered):
 #This function gets multiple faces of those known
 def crawler(location):
 
-    for dirpath, dnames, fnames in os.walk(os.getcwd()):
+    for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
         for face in fnames:
-            print(os.getcwd())
-            image = face_rec.load_image_file(os.getcwd() +"/" + location)
-            return image
+            print(face)
+            try:
+                image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
+                return image
+            except:
+                print("Error")
 
 
 #running the code
@@ -40,6 +48,25 @@ def crawler(location):
 # =============================================================================
 array = []
 unknown = crawler("/Missing")
+print("here")
+box_unknown = []
+box_known = []
 array = crawler("/known_people/")
 for known in array:
-    compare(encode_face(unknown),encode_face(known))
+    try:
+        count +=1
+        if unknown[0] not in box_unknown:
+            box_unknown.append(unknown[0])
+        if known[0] not in box_known:
+            box_known.append(known[0])
+        compare(encode_face(unknown[0]),encode_face(known[0]))
+    except:
+        errors +=1
+
+
+
+print("Report after AI checks")
+print("The loop run", count, "times")
+print("Number of errors caught:",errors)
+print(box_known)
+print(box_unknown)
