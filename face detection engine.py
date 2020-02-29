@@ -1,72 +1,96 @@
 #imports
 import face_recognition as face_rec
-import face_recognition
 import os
+
+
 count = 0
 errors = 0
-#this function converts images to facial encodings for comparison
+
+#This function gets the images in the location directory and returns them in an array
+def crawler(location):
+    facecount=0 #remove
+    image_array = []
+    for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
+        for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
+            facecount += 1 #remove
+            print(face)# remove
+            print("face count is", facecount) #remove
+            try:
+                image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
+                image_array.append(image)
+
+            except:
+                print("Error with crawler function")
+    return image_array
+
+
+
+#this function converts images to facial encodings  and returns the ecncodings for comparison
 def encode_face(image):
-    print(image)
     try:
         image = face_rec.face_encodings(image)
+
     except:
-        print("Error")
+        print("Error with encode_face function")
+        print("Couldn't encode", image)
     return image
 
 
 
 # This function compares the faces to see if its the same person
 def compare(untethered, tethered):
-    #untethered is the picture of the missing person
-    #tethered is the image of the one we know(online)
-    known_image = face_rec.load_image_file(tethered)
-    unknown_image = face_rec.load_image_file(untethered)
+    #untethered is the array of the picture of the missing person
+    #tethered is an array of the images of the people who aren't missing but might know the missing person(online)
 
-    known_encoding = face_rec.face_encodings(known_image)[0]
-    unknown_encoding = face_rec.face_encodings(unknown_image)[0]
+    results = []
+    print("the length of untethered is",len(untethered))
+    print("the length of tethered is",len(tethered))
+    for tethered_image in tethered:
+        for untethered_image in untethered:
+            known_image = face_rec.load_image_file(tethered_image)
+            unknown_image = face_rec.load_image_file(untethered_image)
 
-    results = face_rec.compare_faces([known_encoding], unknown_encoding)
+            known_encoding = face_rec.face_encodings(known_image)[0]
+            unknown_encoding = face_rec.face_encodings(unknown_image)[0]
+
+            results.append(face_rec.compare_faces([known_encoding], unknown_encoding))
+            print("results",results)
+    print("Result printing starts now")
     print(results)
 
 
-#This function gets multiple faces of those known
-def crawler(location):
 
-    for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
-        for face in fnames:
-            print(face)
-            try:
-                image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
-                return image
-            except:
-                print("Error")
-
-
+#This function groups the encoding
 #running the code
 # =============================================================================
 # location = "/" + input("Enter a folder name to look in")
 # =============================================================================
-array = []
+
 unknown = crawler("/Missing")
-print("here")
-box_unknown = []
-box_known = []
-array = crawler("/known_people/")
-for known in array:
-    try:
-        count +=1
-        if unknown[0] not in box_unknown:
-            box_unknown.append(unknown[0])
-        if known[0] not in box_known:
-            box_known.append(known[0])
-        compare(encode_face(unknown[0]),encode_face(known[0]))
-    except:
-        errors +=1
+known = crawler("/known_people/")
+for known_image in known:
+    for unknown_image in unknown:
+        compare(encode_face(unknown_image),encode_face(known_image))
+# =============================================================================
+#     try:
+#         count +=1
+#         if unknown[0] not in box_unknown:
+#             box_unknown.append(unknown[0])
+#         if known[0] not in box_known:
+#             box_known.append(known[0])
+#         compare(encode_face(unknown[0]),encode_face(known[0]))
+#     except:
+#         errors +=1
+# =============================================================================
 
 
 
 print("Report after AI checks")
 print("The loop run", count, "times")
 print("Number of errors caught:",errors)
-print(box_known)
-print(box_unknown)
+print(unknown)
+print(known)
+
+
+#todo drag and drop picture to start search
+#todo add report of how many images were searched
