@@ -18,6 +18,8 @@ def crawler(location):
             try:
                 image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
                 image_array.append(image)
+                key = image.keys()
+                print(key)
 
             except:
                 print("Error with crawler function")
@@ -27,12 +29,16 @@ def crawler(location):
 
 #this function converts images to facial encodings  and returns the ecncodings for comparison
 def encode_face(image):
-    try:
-        image = face_rec.face_encodings(image)
-
-    except:
-        print("Error with encode_face function")
-        print("Couldn't encode", image)
+    image = face_rec.face_encodings(image)
+    print("ksdhfsdfsdfsdjfsdjdsfkdfskj",image)
+# =============================================================================
+#     try:
+#         image = face_rec.face_encodings(image)
+#
+#     except:
+#         print("Error with encode_face function")
+#         print("Couldn't encode", image)
+# =============================================================================
     return image
 
 
@@ -43,18 +49,35 @@ def compare(untethered, tethered):
     #tethered is an array of the images of the people who aren't missing but might know the missing person(online)
 
     results = []
+    distances = [] #Array to hold the distances for each set
     print("the length of untethered is",len(untethered))
     print("the length of tethered is",len(tethered))
     for tethered_image in tethered:
         for untethered_image in untethered:
-            known_image = face_rec.load_image_file(tethered_image)
-            unknown_image = face_rec.load_image_file(untethered_image)
+# =============================================================================
+#             known_image = face_rec.load_image_file(tethered_image)
+#             unknown_image = face_rec.load_image_file(untethered_image)
+# =============================================================================
 
-            known_encoding = face_rec.face_encodings(known_image)[0]
-            unknown_encoding = face_rec.face_encodings(unknown_image)[0]
+            known_encoding = face_rec.face_encodings(tethered_image)
+            unknown_encoding = face_rec.face_encodings(untethered_image)
 
             results.append(face_rec.compare_faces([known_encoding], unknown_encoding))
-            print("results",results)
+            distance = face_recognition.face_distance(tethered_image, untethered_image)
+            print("distance", type(distance), distance)
+
+# =============================================================================
+#              face_distances = face_recognition.face_distance(faces_encoded, face_encoding)
+#         best_match_index = np.argmin(face_distances)
+#         if matches[best_match_index]:
+#             name = known_face_names[best_match_index]
+#
+#         face_names.append(name)
+#
+# =============================================================================
+
+
+    print("results",results)
     print("Result printing starts now")
     print(results)
 
@@ -68,8 +91,12 @@ def compare(untethered, tethered):
 
 unknown = crawler("/Missing")
 known = crawler("/known_people/")
+size = []
 for known_image in known:
+    print("known image", known_image)
     for unknown_image in unknown:
+        size.append(unknown_image[0][1])
+        print("unknown image", unknown_image)
         compare(encode_face(unknown_image),encode_face(known_image))
 # =============================================================================
 #     try:
