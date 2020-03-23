@@ -25,13 +25,16 @@ def crawler(location):
     return image_array
 
 #This function encodes the image of the missing person
-def encode_unknown(image): # make it such that image == the file names
-# =============================================================================
-#     print("image",image)
-# =============================================================================
 
-    img = cv2.imread(image,1)
-    print("img",type(img))
+#This takes files of a specific file extension into a list
+image_squad = []
+for dirpath, dnames, fnames in os.walk(os.getcwd() + "/Missing"):
+    for f in fnames:
+        if f.endswith(".jpg") or f.endswith(".png"):
+            image_squad.append(f)
+
+def encode_unknown(image):
+    img = cv2.imread(image)
     face_locations = face_rec.face_locations(img) #finding the locations of the faces in the image
     face_encodings =face_rec.face_encodings(img, face_locations)
 
@@ -41,14 +44,11 @@ def encode_unknown(image): # make it such that image == the file names
 def encode_known():
     holder = {} #dictionary to hold the name(key) and encoding of the image
 
-
     for dirpath, dnames, fnames in os.walk("./known_people"):
         for f in fnames:
-            face = face_rec.load_image_file("known_people/" + f)
-            encoding = face_rec.face_encodings(face)
-            holder[f.split(".")[0]] = encoding # f is the file name
-
-    print("holder", holder)
+            face = face_rec.load_image_file("known_people" + f)
+            encoding = face_rec.face_encodings(face)[0]
+            holder[f.split(".")[0]] = encoding
 
     return holder
 
@@ -66,26 +66,17 @@ def compare(untethered, tethered):
     print("the length of tethered is",len(tethered))
     for tethered_image in tethered:
         for untethered_image in untethered:
-            print("tethered", type(tethered), tethered)
-            print("untethered", type(untethered), untethered)
-            print("untethered_image", type(untethered_image), untethered_image)
-            print("tethered_image", type(tethered_image), tethered_image)
 # =============================================================================
 #             known_image = face_rec.load_image_file(tethered_image)
 #             unknown_image = face_rec.load_image_file(untethered_image)
 # =============================================================================
-# =============================================================================
-#             print("check 1", type(tethered.get(tethered_image)[0]), tethered.get(tethered_image)[0])
-#             known_encoding = face_rec.face_encodings(tethered.get(tethered_image)[0])
-#             print("check 2")
-#             unknown_encoding = face_rec.face_encodings(untethered_image)
-#             print("check 3")
-# =============================================================================
+            print(type(tethered_image[0]))
+            print(type(untethered_image[0]))
+            known_encoding = face_rec.face_encodings(tethered_image[0])
+            unknown_encoding = face_rec.face_encodings(untethered_image[0])
 
-# =============================================================================
-#             results.append(face_rec.compare_faces(tethered_image, untethered_image))
-# =============================================================================
-            distance = face_rec.face_distance(tethered, untethered_image)
+            results.append(face_rec.compare_faces([known_encoding], unknown_encoding))
+            distance = face_rec.face_distance(tethered_image, untethered_image)
             print("distance", type(distance), distance)
 
 # =============================================================================
@@ -104,8 +95,6 @@ def compare(untethered, tethered):
     print(results)
 
 
-ad = {"l": 3}
-
 
 #This function groups the encoding
 #running the code
@@ -113,21 +102,16 @@ ad = {"l": 3}
 # location = "/" + input("Enter a folder name to look in")
 # =============================================================================
 
-# =============================================================================
-# unknown = crawler("/Missing/")
-# =============================================================================
+unknown = crawler("/Missing")
 known = crawler("/known_people/")
 size = []
-# =============================================================================
-# print("unknown", len(unknown))
-# =============================================================================
-print("known", len(known))
-i =0
+print("This is image squad", image_squad)
 for known_image in known:
-    i +=1
-    print(i)
-    compare(encode_unknown("test.jpg"),encode_known().values())
-    test = {}
+    print("known image", known_image)
+    for unknown_image in unknown:
+        size.append(unknown_image[0][1])
+        print("unknown image", unknown_image)
+        compare(encode_unknown("/Missing/test.jpg"),encode_known())
 
 # =============================================================================
 #     try:
@@ -146,10 +130,8 @@ for known_image in known:
 print("Report after AI checks")
 print("The loop run", count, "times")
 print("Number of errors caught:",errors)
-# =============================================================================
-# print(unknown)
-# print(known)
-# =============================================================================
+print(unknown)
+print(known)
 
 
 #todo drag and drop picture to start search
