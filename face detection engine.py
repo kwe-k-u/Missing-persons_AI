@@ -7,16 +7,17 @@ import numpy as np
 
 count = 0
 errors = 0
+known_filenames = [] #array to hold the file names of those scanned
 
 #This function gets the images in the location directory and returns them in an array
 def crawler(location):
-    facecount=0 #remove
+
     image_array = []
     for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
         for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
-            facecount += 1 #remove
-            print(face)# remove
-            print("face count is", facecount) #remove
+
+            known_filenames.append(face)
+
             try:
                 image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
                 image_array.append(image)
@@ -63,7 +64,7 @@ def compare(untethered, tethered):
     #untethered is the array of the picture of the missing person
     #tethered is an array of the images of the people who aren't missing but might know the missing person(online)
 
-    results = []
+    results = [] #array to hold the results of comparisons
     distance_array = [] #Array to hold the distances for each set
     print("the length of untethered is",len(untethered))
     print("the length of tethered is",len(tethered))
@@ -71,12 +72,27 @@ def compare(untethered, tethered):
         for untethered_image in untethered:
 
 
+            # face distances
             distance = face_rec.face_distance(tethered_image, untethered_image)
             distance_array.append(distance)
+            best_index = np.argmin(distance_array)
 
-            best_index = np.argmin(distance)
+            print(best_index)
 
-            if
+            # compare_faces
+            matches = face_rec.compare_faces(tethered_image, untethered_image)
+            print("matches",matches, type(matches))
+            results.append(matches)
+
+
+
+
+    #display results
+    if results[best_index]:
+        print("The closest match is", known_filenames[best_index])
+
+
+
 
 # =============================================================================
 #              face_distances = face_recognition.face_distance(faces_encoded, face_encoding)
@@ -113,10 +129,14 @@ size = []
 # =============================================================================
 print("known", len(known))
 i =0
-for known_image in known:
-    i +=1
-    print(i)
-    compare(encode_unknown("test.jpg"),encode_known().values())
+# =============================================================================
+# for known_image in known:
+#     i +=1
+#     print(i)
+#     compare(encode_unknown("test.jpg"),encode_known().values())
+# =============================================================================
+
+compare(encode_unknown("test.jpg"),encode_known().values())
 
 # =============================================================================
 #     try:
