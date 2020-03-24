@@ -2,6 +2,7 @@
 import face_recognition as face_rec
 import os
 import cv2
+import numpy as np
 
 
 count = 0
@@ -48,7 +49,9 @@ def encode_known():
             encoding = face_rec.face_encodings(face)
             holder[f.split(".")[0]] = encoding # f is the file name
 
-    print("holder", holder)
+# =============================================================================
+#     print("holder", holder)
+# =============================================================================
 
     return holder
 
@@ -61,32 +64,19 @@ def compare(untethered, tethered):
     #tethered is an array of the images of the people who aren't missing but might know the missing person(online)
 
     results = []
-    distances = [] #Array to hold the distances for each set
+    distance_array = [] #Array to hold the distances for each set
     print("the length of untethered is",len(untethered))
     print("the length of tethered is",len(tethered))
     for tethered_image in tethered:
         for untethered_image in untethered:
-            print("tethered", type(tethered), tethered)
-            print("untethered", type(untethered), untethered)
-            print("untethered_image", type(untethered_image), untethered_image)
-            print("tethered_image", type(tethered_image), tethered_image)
-# =============================================================================
-#             known_image = face_rec.load_image_file(tethered_image)
-#             unknown_image = face_rec.load_image_file(untethered_image)
-# =============================================================================
-# =============================================================================
-#             print("check 1", type(tethered.get(tethered_image)[0]), tethered.get(tethered_image)[0])
-#             known_encoding = face_rec.face_encodings(tethered.get(tethered_image)[0])
-#             print("check 2")
-#             unknown_encoding = face_rec.face_encodings(untethered_image)
-#             print("check 3")
-# =============================================================================
 
-# =============================================================================
-#             results.append(face_rec.compare_faces(tethered_image, untethered_image))
-# =============================================================================
-            distance = face_rec.face_distance(tethered, untethered_image)
-            print("distance", type(distance), distance)
+
+            distance = face_rec.face_distance(tethered_image, untethered_image)
+            distance_array.append(distance)
+
+            best_index = np.argmin(distance)
+
+            if
 
 # =============================================================================
 #              face_distances = face_recognition.face_distance(faces_encoded, face_encoding)
@@ -101,10 +91,10 @@ def compare(untethered, tethered):
 
     print("results",results)
     print("Result printing starts now")
-    print(results)
+    print("distances", distance_array)
 
 
-ad = {"l": 3}
+
 
 
 #This function groups the encoding
@@ -127,7 +117,6 @@ for known_image in known:
     i +=1
     print(i)
     compare(encode_unknown("test.jpg"),encode_known().values())
-    test = {}
 
 # =============================================================================
 #     try:
@@ -143,8 +132,7 @@ for known_image in known:
 
 
 
-print("Report after AI checks")
-print("The loop run", count, "times")
+
 print("Number of errors caught:",errors)
 # =============================================================================
 # print(unknown)
