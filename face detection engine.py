@@ -5,6 +5,10 @@ import cv2
 import numpy as np
 
 
+#counts for error checking
+count_distance = 0
+count_npargmin = 0
+count_compare = 0
 count = 0
 errors = 0
 known_filenames = [] #array to hold the file names of those scanned
@@ -28,9 +32,6 @@ def crawler(location):
 
 #This function encodes the image of the missing person
 def encode_unknown(image): # make it such that image == the file names
-# =============================================================================
-#     print("image",image)
-# =============================================================================
 
     img = cv2.imread(image,1)
     print("img",type(img))
@@ -50,10 +51,6 @@ def encode_known():
             encoding = face_rec.face_encodings(face)
             holder[f.split(".")[0]] = encoding # f is the file name
 
-# =============================================================================
-#     print("holder", holder)
-# =============================================================================
-
     return holder
 
 
@@ -68,19 +65,38 @@ def compare(untethered, tethered):
     distance_array = [] #Array to hold the distances for each set
     print("the length of untethered is",len(untethered))
     print("the length of tethered is",len(tethered))
+    count_distance = 0
+    count_npargmin = 0
+    count_compare =0
+
+
+
+
+
     for tethered_image in tethered:
         for untethered_image in untethered:
 
 
             # face distances
-            distance = face_rec.face_distance(tethered_image, untethered_image)
-            distance_array.append(distance)
-            best_index = np.argmin(distance_array)
+            try:
+                distance = face_rec.face_distance(tethered_image, untethered_image)
+            except:
+                count_distance +=1
 
-            print(best_index)
+            distance_array.append(distance)
+
+            try:
+                best_index = np.argmin(distance_array)
+                print(best_index)
+            except:
+                count_npargmin +=1
+
 
             # compare_faces
-            matches = face_rec.compare_faces(tethered_image, untethered_image)
+            try:
+                matches = face_rec.compare_faces(tethered_image, untethered_image)
+            except:
+                count_compare += 1
             print("matches",matches, type(matches))
             results.append(matches)
 
@@ -88,76 +104,41 @@ def compare(untethered, tethered):
 
 
     #display results
-    if results[best_index]:
-        print("The closest match is", known_filenames[best_index])
-
-
-
-
-# =============================================================================
-#              face_distances = face_recognition.face_distance(faces_encoded, face_encoding)
-#         best_match_index = np.argmin(face_distances)
-#         if matches[best_match_index]:
-#             name = known_face_names[best_match_index]
-#
-#         face_names.append(name)
-#
-# =============================================================================
-
-
-    print("results",results)
-    print("Result printing starts now")
-    print("distances", distance_array)
+    try:
+        if results[best_index]:
+            print("The closest match is", known_filenames[best_index])
 
 
 
 
 
-#This function groups the encoding
-#running the code
-# =============================================================================
-# location = "/" + input("Enter a folder name to look in")
-# =============================================================================
 
-# =============================================================================
-# unknown = crawler("/Missing/")
-# =============================================================================
+        print("results",results)
+        print("Result printing starts now")
+        print("distances", distance_array)
+    except:
+        print("Error with process")
+
+
+
+
+
 known = crawler("/known_people/")
 size = []
-# =============================================================================
-# print("unknown", len(unknown))
-# =============================================================================
 print("known", len(known))
-i =0
-# =============================================================================
-# for known_image in known:
-#     i +=1
-#     print(i)
-#     compare(encode_unknown("test.jpg"),encode_known().values())
-# =============================================================================
 
 compare(encode_unknown("test.jpg"),encode_known().values())
 
-# =============================================================================
-#     try:
-#         count +=1
-#         if unknown[0] not in box_unknown:
-#             box_unknown.append(unknown[0])
-#         if known[0] not in box_known:
-#             box_known.append(known[0])
-#         compare(encode_face(unknown[0]),encode_face(known[0]))
-#     except:
-#         errors +=1
-# =============================================================================
 
 
 
 
-print("Number of errors caught:",errors)
-# =============================================================================
-# print(unknown)
-# print(known)
-# =============================================================================
+
+print(" \t \t Number of errors caught")
+print("face comparison", count_compare)
+print("distance calculation", count_distance)
+print("smallest comparison", count_npargmin)
+
 
 
 #todo drag and drop picture to start search
