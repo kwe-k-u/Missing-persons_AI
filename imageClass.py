@@ -48,7 +48,7 @@ class ImageData:
 
     def setEncoding(self, fname):
         image = face_rec.load_image_file(self.location +"/"+ fname)
-        img = cv2.imread(fname,1)
+        img = cv2.imread(self.location + "/" + fname,1)
         location = face_rec.face_locations(image)
         return face_rec.face_encodings(img, location)
 

@@ -131,9 +131,17 @@ class recog_engine:
 # =============================================================================
 
         dis = False
-        print("didnt")
+        print("unknown")
+        print(unknown.getEncoding())
+        print()
+        print()
+        print()
+        print("known")
+        print(known.getEncoding())
+        print()
+        print()
+        print()
         distance = face_rec.face_distance(known.getEncoding(), unknown.getEncoding())
-        print("fail")
         print(distance)
         if unknown.matchDistance == None or unknown.matchDistance > distance:
             dis = True
