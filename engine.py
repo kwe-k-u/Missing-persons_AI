@@ -26,40 +26,73 @@ class recog_engine:
 
     # This function finds the images to be analysed.
     def findImages(self,location,missing): #location is the file directory
-                                            #  missing is a boolean for if its missing people were are looking at
-        try:
 
-            if missing:
-                #Prompt to let us know the system is working
-                print("WORKING")
-                print("Finding images of missing persons")
+        if missing:
+            #Prompt to let us know the system is working
+            print("WORKING")
+            print("Finding images of missing persons")
 
-                for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
-                    for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
+            for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
+                for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
 
 # =============================================================================
 #                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
 # =============================================================================
-
-                        self.unknown_images.append(ImageData(face,location))
-
-
-            else:
-                #Prompt to let us know the system is working
-                print("WORKING")
-                print("Simulating finding images on social media")
+                    self.unknown_images.append(ImageData(face,location))
 
 
-                # route for "known" images
-                for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
-                    for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
-                        image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
-                        self.known_images.append(ImageData(face,location,image))
+        else:
+            #Prompt to let us know the system is working
+            print("WORKING")
+            print("Simulating finding images on social media")
 
 
-        except:
-            print(face)
-            self.updateError("crawler")
+            # route for "known" images
+            for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
+                for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
+# =============================================================================
+#                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
+# =============================================================================
+                        self.known_images.append(ImageData(face,location))
+
+                                            #  missing is a boolean for if its missing people were are looking at
+
+# =============================================================================
+#         try:
+#
+#             if missing:
+#                 #Prompt to let us know the system is working
+#                 print("WORKING")
+#                 print("Finding images of missing persons")
+#
+#                 for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
+#                     for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
+#
+# # =============================================================================
+# #                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
+# # =============================================================================
+#                         self.unknown_images.append(ImageData(face,location))
+#
+#
+#             else:
+#                 #Prompt to let us know the system is working
+#                 print("WORKING")
+#                 print("Simulating finding images on social media")
+#
+#
+#                 # route for "known" images
+#                 for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
+#                     for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
+# # =============================================================================
+# #                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
+# # =============================================================================
+#                         self.known_images.append(ImageData(face,location))
+#
+#
+#         except:
+#             print(face)
+#             self.updateError("crawler")
+# =============================================================================
 
 
 

@@ -1,7 +1,8 @@
 #This class holds image data
 #imports
 import face_recognition as face_rec
-
+import os
+import cv2
 # =============================================================================
 # import numpy as np
 # =============================================================================
@@ -17,16 +18,13 @@ import face_recognition as face_rec
 
 class ImageData:
 
-    def __init__(self, name, location):
-        self.name = name.split(".")[0] #This holds the account name(or file name) for the image
-        self.location = location # This holds the url for the image (or file location)
+    def __init__(self, paramName, location):
+        self.name = paramName.split(".")[0] #This holds the account name(or file name) for the image
+        self.location = (os.getcwd() + "/" + location) # This holds the url for the image (or file location)
         self.matchedStatus = False; #This holds a boolean for if a match was found for the image
-# =============================================================================
-#         self.imageEncoding = setEncoding(name, location) # This holds the image encoding
-# =============================================================================
         self.matchImage = None
         self.matchDistance = None
-        self.setEncoding(name. location)
+        self.imageEncoding = self.setEncoding(paramName) # This holds the image encoding
 
 
 
@@ -48,36 +46,10 @@ class ImageData:
         self.matchImage = matchData
 
 
-    def setEncoding(name, location):
-        image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ name)
+    def setEncoding(self, fname):
+        image = face_rec.load_image_file(self.location +"/"+ fname)
+        img = cv2.imread(fname,1)
         location = face_rec.face_locations(image)
-        return face_rec.face_encodings(image, location)
+        return face_rec.face_encodings(img, location)
 
 
-
-# =============================================================================
-#
-# #This function encodes the image of the missing person
-# def encode_unknown(image): # make it such that image == the file names
-#
-#     img = cv2.imread(image,1)
-#     print("img",type(img))
-#     face_locations = face_rec.face_locations(img) #finding the locations of the faces in the image
-#     face_encodings =face_rec.face_encodings(img, face_locations)
-#
-#     return face_encodings
-#
-# #This function encodes the images of the
-# def encode_known():
-#     holder = {} #dictionary to hold the name(key) and encoding of the image
-#
-#
-#     for dirpath, dnames, fnames in os.walk("./known_people"):
-#         for f in fnames:
-#             face = face_rec.load_image_file("known_people/" + f)
-#             encoding = face_rec.face_encodings(face)
-#             holder[f.split(".")[0]] = encoding # f is the file name
-#
-#     return holder
-#
-# =============================================================================
