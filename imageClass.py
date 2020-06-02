@@ -40,11 +40,25 @@ class ImageData:
     def getImage(self):
         return self.image
 
+    def getMatchImage(self):
+        return self.matchImage
+
+    def getName(self):
+        return self.name
+
+    def getLocation(self):
+        return self.location
+
+    def getDistance(self):
+        return self.distance
+
     def displayData(self):
         print("Image name:", self.name)
         print("Image location", self.location)
         print("Match status", self.matchedStatus)
-        print("Match Image", self.matchImage)
+        if self.matchedStatus:
+            print("Match Image", self.matchImage.getName())
+
 
     def setMatch(self, matchData): #sets match status to  true if a match is found
         self.matchedStatus = True
@@ -54,11 +68,6 @@ class ImageData:
     def setEncoding(self, fname):
         if self.known:
             image = face_rec.load_image_file(self.location + "/" + fname)
-            print("What is happening")
-            print(face_rec.face_encodings(image))
-            print("dd")
-            print("dd")
-            print("dd")
             return face_rec.face_encodings(image)
         image = face_rec.load_image_file(self.location +"/"+ fname)
         img = cv2.imread(self.location + "/" + fname,1)

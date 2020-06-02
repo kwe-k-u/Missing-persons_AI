@@ -148,6 +148,21 @@ class recog_engine:
             print()
             print()
             print()
+# =============================================================================
+#             for unknown in self.unknown_images:
+#                 uEncoding = unknown.getEncoding()
+#
+#                 print("unknown encoding")
+#                 print(uEncoding)
+#                 print()
+#                 print()
+#                 distance = face_rec.face_distance(uEncoding, kEncoding)
+#                 if unknown.matchDistance == None or unknown.matchDistance > distance:
+#                     dis = True
+#
+#                 if face_rec.compare_faces(kEncoding,uEncoding) and dis:
+#                     unknown.setMatch(known)
+# =============================================================================
             for unknown in self.unknown_images:
                 uEncoding = unknown.getEncoding()
 
@@ -155,11 +170,11 @@ class recog_engine:
                 print(uEncoding)
                 print()
                 print()
-                distance = face_rec.face_distance(uEncoding, kEncoding)
+                distance = face_rec.face_distance(uEncoding[0], kEncoding)
                 if unknown.matchDistance == None or unknown.matchDistance > distance:
                     dis = True
 
-                if face_rec.compare_faces(kEncoding,uEncoding) and dis:
+                if face_rec.compare_faces(kEncoding,uEncoding[0]) and dis:
                     unknown.setMatch(known)
 
 
