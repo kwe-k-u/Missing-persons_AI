@@ -1,21 +1,20 @@
 #running module
 from engine import *
 
-recog_engine = recog_engine()
-recog_engine.findImages("./known_people", False) # simulating finding images on social media
-recog_engine.findImages("./unknown_people", True) # loading the images of the missing persons
+recog_engine = recog_engine() #Initialising recognition engine
+recog_engine.findImages("known_people", False) # simulating finding images on social media
+recog_engine.findImages("unknown_people", True) # loading the images of the missing persons
 
 
-for known_images in recog_engine.getKnown():
-    for unknown_images in recog_engine.getUnknown():
+#comparing the images found
+recog_engine.compare()
 
-        recog_engine.compare(known_images, unknown_images)
-
+#Displaying the information about the images
 recog_engine.displayObjects()
 
-
+#Displaying Error information
 recog_engine.displayErrorCount()
 
-#Comparing the images found
+#Allowing terminal access to the code
 while True:
     eval(input("Entry allowed: "))
