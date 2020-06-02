@@ -27,6 +27,10 @@ class recog_engine:
     # This function finds the images to be analysed.
     def findImages(self,location,missing): #location is the file directory
 
+        #Missing is a boolean for if the image being found is of missing people or tethered people
+# =============================================================================
+#         try:
+# =============================================================================
         if missing:
             #Prompt to let us know the system is working
             print("WORKING")
@@ -50,45 +54,9 @@ class recog_engine:
             # route for "known" images
             for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
                 for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
-# =============================================================================
-#                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
-# =============================================================================
+
                         self.known_images.append(ImageData(face,location))
-
-                                            #  missing is a boolean for if its missing people were are looking at
-
 # =============================================================================
-#         try:
-#
-#             if missing:
-#                 #Prompt to let us know the system is working
-#                 print("WORKING")
-#                 print("Finding images of missing persons")
-#
-#                 for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
-#                     for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
-#
-# # =============================================================================
-# #                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
-# # =============================================================================
-#                         self.unknown_images.append(ImageData(face,location))
-#
-#
-#             else:
-#                 #Prompt to let us know the system is working
-#                 print("WORKING")
-#                 print("Simulating finding images on social media")
-#
-#
-#                 # route for "known" images
-#                 for dirpath, dnames, fnames in os.walk(os.getcwd() + "/" + location ):
-#                     for face in fnames: #face is the name of the file and fnames is the array that holds the names of all the files
-# # =============================================================================
-# #                         image = face_rec.load_image_file(os.getcwd() +"/" + location +"/"+ face)
-# # =============================================================================
-#                         self.known_images.append(ImageData(face,location))
-#
-#
 #         except:
 #             print(face)
 #             self.updateError("crawler")
@@ -131,30 +99,68 @@ class recog_engine:
 # =============================================================================
 
         dis = False
-        print("unknown")
-        print(unknown.getEncoding())
-        print()
-        print()
-        print()
-        print("known")
-        print(known.getEncoding())
-        print()
-        print()
-        print()
-        distance = face_rec.face_distance(known.getEncoding(), unknown.getEncoding())
-        print(distance)
-        if unknown.matchDistance == None or unknown.matchDistance > distance:
-            dis = True
-            unknown.matchDistance = distance
+# =============================================================================
+#         print("unknown")
+#         print(unknown.getEncoding())
+#         print()
+#         print()
+#         print()
+#         print("known")
+#         print(known.getEncoding())
+#         print()
+#         print()
+#         print()
+# =============================================================================
+# =============================================================================
+#         kEncode = known.getEncoding()
+#         uEncode = unknown.getEncoding()
+#         print("encode")
+#         print(kEncode)
+#         print("decode")
+#         print(uEncode)
+#         for k in kEncode:
+#             for u in uEncode:
+#                 print("l")
+#                 distance = face_rec.face_distance(known.getEncoding(), unknown.getEncoding())
+# =============================================================================
+# =============================================================================
+#         print(distance)
+# =============================================================================
 
-        known_encoding = known.getEncoding()
-        unknown_encoding = unknown.getEncoding()
+# =============================================================================
+#             unknown.matchDistance = distance
+# =============================================================================
+
 
         #Loops through the columns of matrix to do the comaprisons
-        print()
-        for eknown in unknown_encoding:
-            if face_rec.compare_faces(known_encoding,eknown) and dis:
-                unknown.setMatch(known)
+# =============================================================================
+#         print()
+#         for eknown in unknown_encoding:
+#             if face_rec.compare_faces(known_encoding,eknown) and dis:
+#                 unknown.setMatch(known)
+# =============================================================================
+
+        for known in self.known_images:
+            dis = False
+            kEncoding = known.getEncoding()
+            print("Known encode")
+            print(kEncoding)
+            print()
+            print()
+            print()
+            for unknown in self.unknown_images:
+                uEncoding = unknown.getEncoding()
+
+                print("unknown encoding")
+                print(uEncoding)
+                print()
+                print()
+                distance = face_rec.face_distance(uEncoding, kEncoding)
+                if unknown.matchDistance == None or unknown.matchDistance > distance:
+                    dis = True
+
+                if face_rec.compare_faces(kEncoding,uEncoding) and dis:
+                    unknown.setMatch(known)
 
 
 
@@ -213,45 +219,43 @@ class recog_engine:
     def getKnown(self):
         return self.known_images
 
-# =============================================================================
-# #running the engine
-# recog_engine = recog_engine()
-# recog_engine.findImages("./known_people", False) # simulating finding images on social media
-# recog_engine.findImages("./unknown_people", True) # loading the images of the missing persons
-# recog_engine.displayErrorCount()
-# input("paused here")
-# #This function encodes the image of the missing person
-# =============================================================================
 
 
-# =============================================================================
-# def encode_unknown(image): # make it such that image == the file names
+
+
+
+
+#=========================================================================================
+#running the engine
+#This function encodes the image of the missing person
+
+
+def encode_unknown(image): # make it such that image == the file names
+
+    img = cv2.imread(image,1)
+    print("img",type(img))
+    face_locations = face_rec.face_locations(img) #finding the locations of the faces in the image
+    face_encodings =face_rec.face_encodings(img, face_locations)
+
+    return face_encodings
+
+#This function encodes the images of the
+def encode_known():
+    holder = {} #dictionary to hold the name(key) and encoding of the image
+
+
+    for dirpath, dnames, fnames in os.walk("./known_people"):
+        for f in fnames:
+            image_class_array.append(imageClass.ImageData(f))
+            face = face_rec.load_image_file("known_people/" + f)
+            encoding = face_rec.face_encodings(face)
+            holder[f.split(".")[0]] = encoding # f is the file name
+
+    return holder
+
+
+
 #
-#     img = cv2.imread(image,1)
-#     print("img",type(img))
-#     face_locations = face_rec.face_locations(img) #finding the locations of the faces in the image
-#     face_encodings =face_rec.face_encodings(img, face_locations)
-#
-#     return face_encodings
-#
-# #This function encodes the images of the
-# def encode_known():
-#     holder = {} #dictionary to hold the name(key) and encoding of the image
-#
-#
-#     for dirpath, dnames, fnames in os.walk("./known_people"):
-#         for f in fnames:
-#             image_class_array.append(imageClass.ImageData(f))
-#             face = face_rec.load_image_file("known_people/" + f)
-#             encoding = face_rec.face_encodings(face)
-#             holder[f.split(".")[0]] = encoding # f is the file name
-#
-#     return holder
-#
-#
-#
-#
-# =============================================================================
 # This function compares the faces to see if its the same person
 
 def compare(untethered, tethered):

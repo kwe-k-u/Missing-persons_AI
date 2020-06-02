@@ -19,12 +19,17 @@ import cv2
 class ImageData:
 
     def __init__(self, paramName, location):
+        self.known = False
+        #to known if its the image of a missing person
+        if location == "./known_people":
+            self.known = True
         self.name = paramName.split(".")[0] #This holds the account name(or file name) for the image
-        self.location = (os.getcwd() + "/" + location) # This holds the url for the image (or file location)
+        self.location = os.getcwd() + "/" + location # This holds the url for the image (or file location)
         self.matchedStatus = False; #This holds a boolean for if a match was found for the image
         self.matchImage = None
         self.matchDistance = None
         self.imageEncoding = self.setEncoding(paramName) # This holds the image encoding
+
 
 
 
@@ -47,6 +52,14 @@ class ImageData:
 
 
     def setEncoding(self, fname):
+        if self.known:
+            image = face_rec.load_image_file(self.location + "/" + fname)
+            print("What is happening")
+            print(face_rec.face_encodings(image))
+            print("dd")
+            print("dd")
+            print("dd")
+            return face_rec.face_encodings(image)
         image = face_rec.load_image_file(self.location +"/"+ fname)
         img = cv2.imread(self.location + "/" + fname,1)
         location = face_rec.face_locations(image)
