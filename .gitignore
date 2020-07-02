@@ -2,3 +2,5 @@ known_people/
 unknown_people/
 *.jpg
 *.jpeg
+.idea
+__pycache__
